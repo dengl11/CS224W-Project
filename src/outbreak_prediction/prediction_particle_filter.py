@@ -11,7 +11,7 @@ import scipy.stats
 import matplotlib.pyplot as plt
 
 terrorism_dict = pkl.load(open('gtd_group_dict.pkl', 'rb'))
-ISIS_dict = terrorism_dict['Islamic State of Iraq (ISI)']
+ISIS_dict = terrorism_dict["Irish Republican Army (IRA)"]
 terror_raw = pkl.load(open('raw_gtd_data.pkl', 'rb'))
 attack_event_ids = []
 year = [y for y in range(1970, 2017)]
@@ -25,7 +25,10 @@ for y in year:
 		attack_event_ids += ISIS_dict[str(y)][str(m)]
 attack_loactions = []
 for i in attack_event_ids:
-	attack_loactions += [np.array([float(terror_raw[i]['longitude']), float(terror_raw[i]['latitude'])])]		
+	try:
+		attack_loactions += [np.array([float(terror_raw[i]['longitude']), float(terror_raw[i]['latitude'])])]	
+	except:
+		continue	
 
 def create_uniform_particles(x_range, y_range, hdg_range, N):
     particles = np.empty((N, 3))
@@ -93,15 +96,17 @@ def run_pf1(N, sensor_std_err=.1,
             xlim=(0, 20), ylim=(0, 20),
             initial_x=None, landmarks=None, positions=[]):
     NL = len(landmarks)
-    
-    plt.figure()
    
+
+    plt.figure()
+    plt.xlim(*xlim)
+    plt.ylim(*ylim)
     # create particles and weights
     if initial_x is not None:
         particles = create_gaussian_particles(
             mean=initial_x, std=(5, 5, np.pi/4), N=N)
     else:
-        particles = create_uniform_particles((0,20), (0,20), (0, 6.28), N)
+        particles = create_uniform_particles(xlim, ylim, (0, 1), N)
     weights = np.zeros(N)
 
     if plot_particles:
@@ -113,6 +118,7 @@ def run_pf1(N, sensor_std_err=.1,
     
     xs = []
     for x in range(len(positions)):
+        print x
         robot_pos = positions[x]
 
         # distance from robot to each landmark
@@ -141,30 +147,13 @@ def run_pf1(N, sensor_std_err=.1,
         p2 = plt.scatter(mu[0], mu[1], marker='s', color='r')
     
     xs = np.array(xs)
-    #plt.plot(xs[:, 0], xs[:, 1])
-    plt.legend([p1, p2], ['Actual', 'PF'], loc=4, numpoints=1)
-    plt.xlim(*xlim)
-    plt.ylim(*ylim)
+    # plt.plot(xs[:, 0], xs[:, 1])
     print('final position error, variance:\n\t', mu - np.array([len(positions), len(positions)]), var)
+    plt.legend([p1, p2], ['Actual', 'PF'], loc=4, numpoints=1)
+    plt.title('Irish Republican Army (IRA)')
     plt.show()
+    
 
 run_pf1(N=n, plot_particles=False, xlim=x_range, ylim=y_range, landmarks=landmarks, positions=attack_loactions)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
