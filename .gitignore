@@ -1,0 +1,9 @@
+data
+*.DS_Store
+!data/README.md
+*.swp 
+*.so 
+*.pyc  
+out
+**/*.ipynb_checkpoints/*
+
