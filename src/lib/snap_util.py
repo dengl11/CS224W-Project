@@ -2,11 +2,50 @@
 ###   Utility functions based on Snap   ###
 ###########################################
 
+from __future__ import division 
 import snap
 from collections import Counter
 from itertools import combinations
 import random 
 import numpy as np
+from lib import * 
+
+def getNodebyID(Graph,ID):
+    """
+    Args:
+        Graph: 
+        ID: 
+
+    Return: 
+    """
+    return Graph.GetNI(ID)
+
+def random_node_id(Graph):
+    """return a randome node ID of graph
+    Args:
+        Graph: 
+
+    Return: 
+    """
+    Rnd = snap.TRnd(42)
+    Rnd.Randomize()
+    return Graph.GetRndNId(Rnd)
+
+
+def random_node_id_arr(Graph, k):
+    I = set()
+    while len(I) < k:
+        I.add(random_node_id(Graph))
+    return I 
+
+def nodes_id_arr(graph):
+    """return an array of node ids 
+    Args:
+        graph: 
+
+    Return: [ID]
+    """
+    return [x.GetId() for x in graph.Nodes()]
 
 
 def nodes_id_vec(graph):
@@ -14,7 +53,7 @@ def nodes_id_vec(graph):
     Args:
         graph: 
 
-    Return: 
+    Return: snap.TIntV
     """
     Nodes = snap.TIntV()
     for x in graph.Nodes():
@@ -54,6 +93,16 @@ def nodes_count_by_out(nodes):
     nnodes = [out_count[x] for x in outdges ]
     return (outdges, nnodes)
 
+
+def node_prob_by_out(Graph):
+    """return the probability of nodes by out degree 
+    Args:
+        nodes: 
+
+    Return: 
+    """
+    outdges, nnodes = nodes_count_by_out(Graph.Nodes())
+    return (outdges, np.array(nnodes)/Graph.GetNodes())
 
 def add_random_undir_edges(graph, E):
     """add E randome undirected edges to graph 
@@ -156,3 +205,32 @@ def random_pairs(Graph, n):
     nodes_2 = [random.sample(nodes - {x}, 1)[0] for x in nodes_1]
     return zip(nodes_1, nodes_2)
     
+def edge_tuple_vec(Graph):
+    """return an array of node id tuples for edges in Graph
+    Args:
+        Graph: 
+
+    Return: 
+    """
+    return [(x.GetSrcNId(), x.GetDstNId()) for x in Graph.Edges()]
+
+def node_by_id(Graph, id):
+    """ 
+    return node object by id 
+    """
+    return Graph.GetNI(id)
+
+def top_nodes_by_deg(UGraph, k = 10):
+    """ return a list of nodes with highest degree 
+    Args:
+        Graph: undirected graph 
+
+    Kwargs:
+        k: 
+
+    Return: 
+    """
+    OutDegV = snap.TIntPrV()
+    snap.GetNodeOutDegV(UGraph, OutDegV)
+    highest = sorted(((item.GetVal2(), item.GetVal1()) for item in OutDegV), reverse=True)[:k] #[(deg, ID)]
+    return [x[1] for x in highest ]

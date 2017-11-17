@@ -153,7 +153,7 @@ for conn_type, arr in events_by_type.items():
     i = (i + 1)%len(edge_colors)
 
 network_layout=Layout(
-    width = 1400,
+    width = 1000,
     title=title, 
     titlefont=dict(size=16),
     showlegend=1,

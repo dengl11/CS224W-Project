@@ -10,7 +10,8 @@ from dataframe_preprocessor import DataframePreprocessor
 gtd_file_name = 'globalterrorismdb_0617dist.csv'
 # path of full gtd csv file 
 gtd_path = os.path.join(os.getcwd(), "../../data/GTD/{}".format(gtd_file_name))
-mapping_path = os.path.join(os.getcwd(), "../../data/GTD/generated/column_mapping.pkl")
+col_mapping_path = os.path.join(os.getcwd(), "../../data/GTD/generated/column_mapping.pkl")
+row_mapping_path = os.path.join(os.getcwd(), "../../data/GTD/generated/row_mapping.pkl")
 
 ########## Column Name ##############
 
@@ -60,6 +61,15 @@ def get_column_map():
     Return: 
     """
     # load mapping 
-    with open(mapping_path, "rb") as f:
+    with open(col_mapping_path, "rb") as f:
         column_map = pickle.load(f)
     return column_map 
+
+def get_row_map():
+    """return the mapping of rows 
+    Return: 
+    """
+    # load mapping 
+    with open(row_mapping_path, "rb") as f:
+        row_map = pickle.load(f)
+    return row_map 
