@@ -90,7 +90,7 @@ def nodes_count_by_out(nodes):
         out_count[out] += 1
 
     outdges = sorted(out_count.keys())
-    nnodes = [out_count[x] for x in outdges ]
+    nnodes = np.array([out_count[x] for x in outdges ])
     return (outdges, nnodes)
 
 
