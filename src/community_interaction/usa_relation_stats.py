@@ -30,6 +30,7 @@ Graph = snap.LoadEdgeList(snap.PUNGraph, data, 0, 1)
 # clustering_coef = snap.GetClustCf(usa_graph)
 row_map = get_row_map()
 row2id = row_map["row2id"]
+id2row = row_map["id2row"]
 
 nodes = Graph.Nodes()
 n_nodes = Graph.GetNodes()
@@ -120,7 +121,7 @@ def severity_relation():
     plt.savefig("../../out/fig/usa_corr.png")
 
 ############################# Severity vs Degree  #############################
-def extract_community(topK = 5):
+def extract_community(topK = 10):
     """community analysis
     Return: [[eventID] x topK]
     """
@@ -128,7 +129,6 @@ def extract_community(topK = 5):
     modularity = snap.CommunityGirvanNewman(Graph, CmtyV)
     communities = []
     for Cmty in CmtyV:
-        print("Community: ")
         if topK <= 0: break 
         curr = []
         topK -= 1
@@ -138,17 +138,24 @@ def extract_community(topK = 5):
     print("The modularity of the network is %f" % modularity)
     return communities
 
-def show_community(events):
+def get_community(events):
     """show the sub-dataframe for a community
     Args:
         events: 
 
     Return: 
     """ 
-    print(df.loc[events])
+    Nodes = snap.TIntV()
+    for nodeId in events:
+        Nodes.Add(id2row[nodeId])
+    edges_inout = snap.GetEdgesInOut(Graph, Nodes)
+    print("EdgesIn: %s EdgesOut: %s" % (edges_inout[0], edges_inout[1]))
+    return df.loc[events]
     
 
 ############################# Main  #############################
-for c in extract_community():
-    show_community(c)
+communities = extract_community()
+
+# for c in communities:
+    # show_community(c)
 # basic_stats()

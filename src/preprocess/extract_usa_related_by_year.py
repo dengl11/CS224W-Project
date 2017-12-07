@@ -1,5 +1,5 @@
 ################################################
-# Backend for Notebook: Related Network 
+# Extract USA Related Network by Year 
 ################################################ 
 import sys
 sys.path.append("../lib")
@@ -16,20 +16,9 @@ import pickle
 from dataframe_preprocessor import DataframePreprocessor
 
 # Param
-data = "../../data/GTD/generated/GTD_sub_related.csv"
-output = "../../data/GTD/generated/USA_related.tsv"
-csv_output = "../../data/GTD/generated/USA_related.csv"
-
-# Read data 
-dataframe_preprocessor = DataframePreprocessor.init_from_file(data, index_col = COL_eventid)
-dataframe_preprocessor.filter_rows_by_condition(COL_country, lambda x : x == 217)
-
-df = dataframe_preprocessor.get_dataframe()
-dataframe_preprocessor.dump(csv_output, index = True)
-
-row_map = get_row_map() 
-id2row = row_map["id2row"]
-
+year_range = range(1970, 2016 + 1)
+data = "../../data/GTD/generated/USA_related.csv"
+output_dir = "../../data/GTD/generated/usa_related_by_year"
 
 def get_related_edges_from_df(df):
     edges = []
@@ -43,9 +32,21 @@ def get_related_edges_from_df(df):
                     pass
     return edges 
 
+# Read data 
+dataframe_preprocessor = DataframePreprocessor.init_from_file(data, index_col = COL_eventid)
 
-with open(output, "w") as f:
-    print("Event1 Event2", file = f)
-    for e in get_related_edges_from_df(df):
-        print(" ".join([str(x) for x in e]), file = f)
+df = dataframe_preprocessor.get_dataframe()
+
+row_map = get_row_map() 
+id2row = row_map["id2row"]
+
+for year in year_range:
+    print("--- {} ---".format(year))
+    curr = dataframe_preprocessor.get_subframe_by_condition(COL_year, lambda x : x == year)
+    output = os.path.join(output_dir, "{}.tsv".format(year))
+    edges = get_related_edges_from_df(curr)
+    with open(output, "w") as f:
+        print("Event1 Event2", file = f)
+        for e in edges:
+            print(" ".join([str(x) for x in e]), file = f)
 
