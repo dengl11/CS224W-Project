@@ -120,6 +120,35 @@ def severity_relation():
     plt.savefig("../../out/fig/usa_corr.png")
 
 ############################# Severity vs Degree  #############################
+def extract_community(topK = 5):
+    """community analysis
+    Return: [[eventID] x topK]
+    """
+    CmtyV = snap.TCnComV()
+    modularity = snap.CommunityGirvanNewman(Graph, CmtyV)
+    communities = []
+    for Cmty in CmtyV:
+        print("Community: ")
+        if topK <= 0: break 
+        curr = []
+        topK -= 1
+        for NI in Cmty:
+            curr.append(row2id[NI])
+        communities.append(curr)
+    print("The modularity of the network is %f" % modularity)
+    return communities
+
+def show_community(events):
+    """show the sub-dataframe for a community
+    Args:
+        events: 
+
+    Return: 
+    """ 
+    print(df.loc[events])
+    
 
 ############################# Main  #############################
-basic_stats()
+for c in extract_community():
+    show_community(c)
+# basic_stats()
