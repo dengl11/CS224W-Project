@@ -1,5 +1,5 @@
 ##########################################################
-# Group Interaction for USA Relation Network 
+# Group Interaction for Relation Network 
 ##########################################################
 from __future__ import print_function, division 
 import sys
@@ -48,9 +48,21 @@ def preprocess_connections():
     with open(tmp_file, "wb") as f:
         pickle.dump(connections, f)
 
+def plot(conns):
+    """
+    Return: 
+    """
+    conns.reverse()
+    names = ["({}, {})".format(x[0], x[1]) for x in conns]
+    nconn = [x[2] for x in conns]
+    hbar_plot(names, nconn, "Number of Connections", "Group Pairs", "Connections Among Groups", save_path = "../../out/fig/group_conns.png", ytick_rot=45, xtick_rot=45, size = (10, 16))
+
 if preprocess: preprocess_connections() 
 with open(tmp_file, "rb") as f:
     connections = pickle.load(f)
 
-table = tabulate([(str(x[0]), str(x[1]), y) for (x, y) in connections.most_common(5)], headers=["Group1", "Group2", "# Connections"], tablefmt='orgtbl')
+most_strong_conns = [(str(x[0]), str(x[1]), y) for (x, y) in connections.most_common(5)]
+
+table = tabulate(most_strong_conns, headers=["Group1", "Group2", "# Connections"], tablefmt='orgtbl')
 print(table)
+plot(most_strong_conns)

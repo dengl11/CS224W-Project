@@ -44,6 +44,14 @@ default_palette = [green, blue, gray]
 
 # myLogger = ColoredLogger("Plot")
 
+def rotate_axis_ticks(axis, angle):
+    """rotate axis ticks 
+    """
+    ax = plt.gca()
+    ticks = ax.get_xticklabels() if axis == "x" else ax.get_yticklabels()
+    for tick in ticks:
+        tick.set_rotation(angle)
+
 def ax_set_title(ax, title, size=12, weight='bold', color='gray'):
     """
     ax: matplotlib axes
@@ -122,8 +130,7 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix'
     plt.xlabel('Predicted label', fontsize=16 )
     plt.tight_layout() 
     if save_path:
-        plt.savefig(save_path)
-
+        plt.savefig(save_path) 
 
 
 def hbar_plot(yticks, y, xlabel, ylabel, title, **kwargs):
@@ -137,10 +144,16 @@ def hbar_plot(yticks, y, xlabel, ylabel, title, **kwargs):
     Return:
         axes
     """
+    size = kwargs.get('size', None)
     save_path = kwargs.get('save_path', None)
     ylabels = kwargs.get('ylabels', None)
     y_arr = kwargs.get('y_arr', None)
-    fig = plt.figure()
+    xtick_rot = kwargs.get('xtick_rot', None)
+    ytick_rot = kwargs.get('ytick_rot', None)
+
+    if size: fig = plt.figure(figsize=size)
+    else:    fig = plt.figure()
+
     n = len(yticks)
     plt.barh(range(n), y, color=light_purple)
         
@@ -148,6 +161,9 @@ def hbar_plot(yticks, y, xlabel, ylabel, title, **kwargs):
     plt.yticks(range(n), yticks if ylabels is None else ylabels)
     plt.ylabel(ylabel, fontsize=10)
     plt.xlabel(xlabel, fontsize=10)
+    if xtick_rot: rotate_axis_ticks("x", xtick_rot)
+    if ytick_rot: rotate_axis_ticks("y", ytick_rot)
+
     plt.tight_layout()
     ax =  plt.gca()
     if save_path:
