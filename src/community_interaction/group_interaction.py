@@ -53,7 +53,7 @@ def plot(conns):
     Return: 
     """
     conns.reverse()
-    names = ["({}, {})".format(x[0], x[1]) for x in conns]
+    names = ["{}\n{})".format(x[0], x[1]) for x in conns]
     nconn = [x[2] for x in conns]
     hbar_plot(names, nconn, "Number of Connections", "Group Pairs", "Connections Among Groups", save_path = "../../out/fig/group_conns.png", ytick_rot=45, xtick_rot=45, size = (10, 16))
 

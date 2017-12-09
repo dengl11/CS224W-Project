@@ -313,8 +313,34 @@ def sns_bar_plot(dataframe, x_feature, y_feature, conf=96, save_path=None, palet
     if save_path: ax.get_figure().savefig(save_path)
     return ax
 
+def distribution_plot(data, **kwargs):
+    """
+    Return: 
+    """
+    bins = kwargs.get('bins', 10)
+    xlim = kwargs.get('xlim', '')
+    ylim = kwargs.get('ylim', '')
+    xlabel = kwargs.get('xlabel', '')
+    ylabel = kwargs.get('ylabel', '')
+    title = kwargs.get('title', '')
+    save_path = kwargs.get('save_path', None)
 
-def sns_dist_plot(vals, save_path=None, ylim=None, xlim=None, color='green', **kwargs):
+    # Histogram
+    heights,bins = np.histogram(data, bins=bins)
+    # Normalize
+    heights = heights/float(sum(heights))
+    binMids=bins[:-1]+np.diff(bins)/2.
+    plt.hist(data)
+    ax = plt.gca()
+    ax.set_ylabel(ylabel, fontsize=10)
+    ax_set_title(ax, title)
+    ax.set(xlim=xlim)
+    ax.set(ylim=ylim)
+    plt.tight_layout() 
+    if save_path: ax.get_figure().savefig(save_path)
+    return ax
+
+def sns_dist_plot(vals, ylim=None, xlim=None, color='green', **kwargs):
     """
     Args:
         vals: 
@@ -330,7 +356,8 @@ def sns_dist_plot(vals, save_path=None, ylim=None, xlim=None, color='green', **k
     title = kwargs.get('title', '')
     save_path = kwargs.get('save_path', None)
     plot_mean = kwargs.get('plot_mean', False)
-    ax = sns.distplot(vals, color=palette_dict[color], norm_hist=normalize, hist_kws = {'cumulative': True}, vertical=vertical)
+    cumulative = kwargs.get('cumulative', False)
+    ax = sns.distplot(vals, color=palette_dict[color], norm_hist=normalize, hist_kws = {'cumulative': cumulative}, vertical=vertical)
 
     if plot_mean: 
         m = np.round(np.mean(vals), 2)  # mean 
