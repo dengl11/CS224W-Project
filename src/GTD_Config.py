@@ -9,7 +9,9 @@ from dataframe_preprocessor import DataframePreprocessor
 
 gtd_file_name = 'globalterrorismdb_0617dist.csv'
 # path of full gtd csv file 
-gtd_path = os.path.join(os.getcwd(), "../../data/GTD/{}".format(gtd_file_name))
+gtd_path = os.path.join(os.getcwd(), "../../data/GTD/{}".format(gtd_file_name)) 
+relation_csv_path = os.path.join(os.getcwd(), "../../data/GTD/generated/GTD_sub_related.csv")
+
 col_mapping_path = os.path.join(os.getcwd(), "../../data/GTD/generated/column_mapping.pkl")
 row_mapping_path = os.path.join(os.getcwd(), "../../data/GTD/generated/row_mapping.pkl")
 
@@ -56,6 +58,12 @@ def get_full_gtd():
     Return: 
     """
     return DataframePreprocessor.init_from_file(gtd_path, index_col = COL_eventid)
+
+def get_gtd_relation():
+    """return dataframe preprocessor for GTD Relation subcsv  
+    Return: 
+    """
+    return DataframePreprocessor.init_from_file(relation_csv_path, index_col = COL_eventid)
 
 def get_column_map():
     """return the mapping of columns 

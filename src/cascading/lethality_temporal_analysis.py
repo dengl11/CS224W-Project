@@ -18,15 +18,20 @@ import pickle
 from dataframe_preprocessor import DataframePreprocessor
 
 # Param
-preprocess = 0 
+preprocess = 0 # preprocess lethality by year data 
 year_range = range(1970, 2016 + 1)
 top_group_file = "../../out/data/top_lethality_group.pkl"
-year_range = range(1970, 2016 + 1)
 input_dir = "../../data/GTD/generated/gtd_by_year"
 fig_path = "../../out/fig/group_by_year.png"
 tmp_file = "./tmp/group_by_year.pkl"
 
 kill_wound_ratio = 3
+data_by_year = [] 
+
+with open(top_group_file, "rb") as f:
+    top_group_data = pickle.load(f)
+    top_groups = [x[0] for x in top_group_data]
+
 
 
 def get_lethality_from_df(input):
@@ -47,12 +52,6 @@ def get_lethality_from_df(input):
         ans[index] += lethality 
     return ans  
 
-data_by_year = [] 
-
-with open(top_group_file, "rb") as f:
-    top_group_data = pickle.load(f)
-    top_groups = [x[0] for x in top_group_data]
-
 def preprocess_by_year():
     """
     Return: 
@@ -61,7 +60,6 @@ def preprocess_by_year():
 
     n_group = len(top_groups)
     group_lookup = dict((v, k) for (k, v) in enumerate(top_groups))
-    # print(group_lookup)
     for year in year_range:
         input = os.path.join(input_dir, "{}.csv".format(year))
         curr = get_lethality_from_df(input)
@@ -74,6 +72,7 @@ if preprocess: preprocess_by_year()
 with open(tmp_file, "rb") as f:
     data_by_year = pickle.load(f, encoding='latin1')
     data_by_year = np.array(data_by_year).T
+    data_by_year = np.log2(data_by_year + 1)
 
 sns_heatmap(data_by_year,
             save_path="../../out/fig/lethality_by_year.png",
