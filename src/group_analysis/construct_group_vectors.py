@@ -20,7 +20,7 @@ import pickle
 from dataframe_preprocessor import DataframePreprocessor
 
 
-features = ["lethality", "peak_year", "attack_type", "h2a"]
+features = ["lethality", "peak_year", "attack_type", "h2a", "log", "lat"]
 top_k = 100
 if top_k == 10:
     fig_path = "../../out/fig/group_similarity.png"
@@ -42,6 +42,9 @@ with open("../../out/data/top_lethality_group.pkl", "rb") as f:
     lethality_arr = pickle.load(f, encoding="latin1")
     lethality_arr = lethality_arr[:top_k]
 
+with open("../../out/data/geo_location.pkl", "rb") as f:
+    location_dic = pickle.load(f, encoding="latin1")
+
 group_vectors = {} # {gname: [...]}
 n_group = len(lethality_arr)
 
@@ -51,7 +54,10 @@ for v in lethality_arr:
     attack_type = attack_dict[name]
     h2a = h2a_dict[name][-1]
     year = year_dict[name]
-    group_vectors[name] = [lethality, year, attack_type, h2a]
+    lotlat = location_dic[name] 
+    log = lotlat[0]
+    lat = lotlat[1]
+    group_vectors[name] = [lethality, year, attack_type, h2a, log, lat]
 
 if top_k == 10:
     group_names = ['Al-Qaida', 'Al-Shabaab', 'Tehrik-i-Taliban Pakistan (TTP)', 'Taliban', 'Al-Qaida in Iraq','Boko Haram',  'Liberation Tigers of Tamil Eelam (LTTE)', 'Shining Path (SL)','Islamic State of Iraq and the Levant (ISIL)',  'Farabundo Marti National Liberation Front (FMLN)']
