@@ -20,9 +20,9 @@ from dataframe_preprocessor import DataframePreprocessor
 # Param
 tmp_file = "./tmp/lethality.pkl"
 top_groups_output = "../../out/data/top_lethality_group.pkl"
-preprocess = 0
+preprocess = 1
 kill_wound_ratio = 3
-top_k = 10
+top_k = 100
 
 def preprocess_lethality():
     df_preprocessor = get_full_gtd()
@@ -58,6 +58,8 @@ lethality_list = sorted(
         reverse = 1)
 
 top_lethality_groups = [(str(y[0]), y[1], y[2], y[3]) for y in lethality_list[:top_k]]
+
+# save top group data to file 
 with open(top_groups_output, "wb") as f:
     pickle.dump(top_lethality_groups, f)
 

@@ -19,18 +19,20 @@ import pickle
 from dataframe_preprocessor import DataframePreprocessor
 
 # Param
-tmp_file = "./tmp/h2a.pkl"
-preprocess = 1
+tmp_file = "../../out/data/h2a.pkl"
+preprocess = 0
 
 def preprocess_h2a():
     df_preprocessor = get_full_gtd()
     df = df_preprocessor.get_dataframe()
     # replace na as 0
     df.fillna(0, inplace = True)
+    group_lookup = get_top_group_index()
     h2a = defaultdict(lambda : [0, 0, 0]) # group -> (n_attack, n_home_attack, h2a_ratio) 
     for _, row in df.iterrows():
         name, nation, country  = row[COL_gname], row[COL_nation], row[COL_country]
-        if name == "Unknown": continue
+        index = group_lookup.get(name, None)
+        if index is None: continue
         h2a[name][0] += 1 
         if country == nation:
             h2a[name][1] += 1   
@@ -44,9 +46,18 @@ def preprocess_h2a():
 def plot_h2a(h2a):
     save_path = "../../out/fig/h2a.png"
     h2a_ratio = [x[1] for x in h2a]
-    distribution_plot(h2a_ratio, save_path=save_path, xlim=(0, 1), ylim=(0, 1),)
-    # sns.distplot(h2a_ratio, hist_kws=dict(cumulative=False),
-             # kde_kws=dict(cumulative=True))
+    # distribution_plot(h2a_ratio, save_path=save_path, xlim=(0, 1), ylim=(0, 1),)
+    sns_dist_plot(h2a_ratio,
+                  save_path=save_path,
+                  normalize=True,
+                  cumulative=False,
+                  title="Distribution of H2A Ratio",
+                  xlabel="H2A",
+                  ylabel="Probabilty Density Value",
+                  xlim=(0, 1),
+                  # ylim=(0, 4)
+                  )
+    # sns.distplot(h2a_ratio, kde=False)
     # plt.show()
     # h2a.reverse()
     # names = [x[0] for x in h2a]
@@ -65,4 +76,4 @@ h2a_list = sorted(
 
 # table = tabulate([(str(y[0]), y[1], y[2], y[3]) for y in h2a_list[:10]], headers=["Group", "Kill", "Wound", "Severity"], tablefmt='orgtbl')
 # print(table)
-# plot_h2a(h2a_list)
+plot_h2a(h2a_list)

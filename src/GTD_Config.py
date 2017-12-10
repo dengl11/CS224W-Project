@@ -10,6 +10,7 @@ from dataframe_preprocessor import DataframePreprocessor
 gtd_file_name = 'globalterrorismdb_0617dist.csv'
 # path of full gtd csv file 
 gtd_path = os.path.join(os.getcwd(), "../../data/GTD/{}".format(gtd_file_name)) 
+top_lethality_group_pkl = os.path.join(os.getcwd(), "../../out/data/top_lethality_group.pkl")
 relation_csv_path = os.path.join(os.getcwd(), "../../data/GTD/generated/GTD_sub_related.csv")
 
 col_mapping_path = os.path.join(os.getcwd(), "../../data/GTD/generated/column_mapping.pkl")
@@ -82,3 +83,34 @@ def get_row_map():
     with open(row_mapping_path, "rb") as f:
         row_map = pickle.load(f)
     return row_map 
+
+
+def simplity_gname(gname):
+    """
+    Args:
+        gname: 
+
+    Return: 
+    """
+    if len(gname) <= 7: return gname
+    left = gname.find('(')
+    right = gname.find(')')
+    if left >= 0 and right >= 0: return gname[left+1: right]
+    return gname[:5] + ".."
+
+def simplity_gnames(gnames):
+    """
+    Args:
+        gname: 
+
+    Return: 
+    """
+    return [simplity_gname(x) for x in gnames]
+
+def get_top_group_index():
+    """return {group: index}
+    Return: 
+    """
+    with open(top_lethality_group_pkl, "rb") as f:
+        groups = pickle.load(f)
+    return dict((x[0], k) for (k, x) in enumerate(groups))
