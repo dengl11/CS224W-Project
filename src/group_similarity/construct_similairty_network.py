@@ -23,7 +23,7 @@ from dataframe_preprocessor import DataframePreprocessor
 sim_pkl = "../../out/data/similarity_100.pkl"
 group_vec_pkl = "../../out/data/group_vectors.pkl"
 sim_network_tsv = "../../data/GTD/generated/sim_network.tsv"
-sim_threshold = 3
+sim_threshold = 5
 
 with open(sim_pkl, "rb") as f:
     dic = pickle.load(f, encoding="latin1")

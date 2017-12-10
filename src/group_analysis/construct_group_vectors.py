@@ -20,7 +20,8 @@ import pickle
 from dataframe_preprocessor import DataframePreprocessor
 
 
-features = ["lethality", "peak_year", "attack_type", "h2a", "log", "lat"]
+features = ["lethality", "peak_year", "attack_type", "target_type", "weapon_type", "h2a", "log", "lat"]
+
 top_k = 100
 if top_k == 10:
     fig_path = "../../out/fig/group_similarity.png"
@@ -38,6 +39,12 @@ with open("../../out/data/h2a.pkl", "rb") as f:
 with open("../../out/data/peak_year.pkl", "rb") as f:
     year_dict = pickle.load(f, encoding="latin1")
 
+with open("../../out/data/target_type.pkl", "rb") as f:
+    target_dict = pickle.load(f, encoding="latin1")
+
+with open("../../out/data/weapon_type.pkl", "rb") as f:
+    weapon_dict = pickle.load(f, encoding="latin1")
+
 with open("../../out/data/top_lethality_group.pkl", "rb") as f:
     lethality_arr = pickle.load(f, encoding="latin1")
     lethality_arr = lethality_arr[:top_k]
@@ -52,12 +59,14 @@ for v in lethality_arr:
     name = v[0]
     lethality = v[-1]
     attack_type = attack_dict[name]
+    target_type = target_dict[name]
+    weapon_type = weapon_dict[name]
     h2a = h2a_dict[name][-1]
     year = year_dict[name]
     lotlat = location_dic[name] 
     log = lotlat[0]
     lat = lotlat[1]
-    group_vectors[name] = [lethality, year, attack_type, h2a, log, lat]
+    group_vectors[name] = [lethality, year, attack_type, target_type, weapon_type, h2a, log, lat]
 
 if top_k == 10:
     group_names = ['Al-Qaida', 'Al-Shabaab', 'Tehrik-i-Taliban Pakistan (TTP)', 'Taliban', 'Al-Qaida in Iraq','Boko Haram',  'Liberation Tigers of Tamil Eelam (LTTE)', 'Shining Path (SL)','Islamic State of Iraq and the Levant (ISIL)',  'Farabundo Marti National Liberation Front (FMLN)']
@@ -72,6 +81,8 @@ def group_similarity(v1, v2):
 
     Return: 
     """
+    v1, v2 = np.array(v1), np.array(v2)
+
     score = 0
     i = 0
     # lethality 
@@ -86,8 +97,20 @@ def group_similarity(v1, v2):
     score += v1[2] == v2[2]
     i += 1
 
+    # target type 
+    score += v1[i] == v2[i]
+    i += 1
+
+    # weapon type 
+    score += v1[i] == v2[i]
+    i += 1
+
     # h2a 
     score += min(v1[i], v2[i])/max(v1[i], v2[i])
+
+    # geo distance
+    dis = np.linalg.norm(v1[-2:] - v2[-2:])
+    score += np.exp(-dis)
 
     return score 
    
