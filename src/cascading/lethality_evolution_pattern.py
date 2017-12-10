@@ -24,12 +24,14 @@ top_group_file = "../../out/data/top_lethality_group.pkl"
 input_dir = "../../data/GTD/generated/gtd_by_year"
 fig_path = "../../out/fig/lethality_evolution.png"
 tmp_file = "./tmp/group_by_year.pkl"
+top_k = 10
 
 kill_wound_ratio = 3
 data_by_year = [] 
 
 with open(top_group_file, "rb") as f:
     top_group_data = pickle.load(f)
+    top_group_data = top_group_data[:top_k]
     top_groups = [x[0] for x in top_group_data]
 
 def increment_matrix(matrix):
@@ -50,6 +52,7 @@ with open(tmp_file, "rb") as f:
     inc_mat = increment_matrix(data_by_year)
 
 inc_df = df_ops.mat2df(inc_mat, columns=top_groups)
+print(inc_df.keys())
 top_groups = simplity_gnames(top_groups)
 sns_clustermap(inc_df,
             save_path=fig_path,

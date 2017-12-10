@@ -17,3 +17,12 @@ def mode(arr):
     except:
         c = Counter(arr)
         return c.most_common(1)[0][0]
+
+def max_index(arr):
+    """return the index item that have the max value 
+    Args:
+        arr: 
+
+    Return: 
+    """
+    return max((v, k) for (k, v) in enumerate(arr))[1]

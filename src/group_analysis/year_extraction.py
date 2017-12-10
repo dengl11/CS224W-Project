@@ -1,5 +1,5 @@
 ################################################
-# Atack Type Analysis for All Groups 
+# Peak Year Analysis for All Groups 
 ################################################ 
 from __future__ import division
 import sys
@@ -20,10 +20,10 @@ import pickle
 from dataframe_preprocessor import DataframePreprocessor
 
 # Param
-analysis_type = "attack_type"
+analysis_type = "peak_year"
+feature = COL_year 
 tmp_file = "../../out/data/{}.pkl".format(analysis_type)
 fig_path = "../../out/fig/{}.png".format(analysis_type)
-feature = COL_attacktype1
 preprocess = 1
 
 def preprocess_analysis():
