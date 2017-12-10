@@ -19,6 +19,7 @@ from dataframe_preprocessor import DataframePreprocessor
 
 # Param
 tmp_file = "./tmp/lethality.pkl"
+top_groups_output = "../../out/data/top_lethality_group.pkl"
 preprocess = 0
 kill_wound_ratio = 3
 
@@ -55,6 +56,10 @@ lethality_list = sorted(
         lambda x, y: 1 if x[3] > y[3] else -1,
         reverse = 1)
 
-table = tabulate([(str(y[0]), y[1], y[2], y[3]) for y in lethality_list[:10]], headers=["Group", "Kill", "Wound", "Severity"], tablefmt='orgtbl')
+top_lethality_groups = [(str(y[0]), y[1], y[2], y[3]) for y in lethality_list[:10]]
+with open(top_groups_output, "wb") as f:
+    pickle.dump(top_lethality_groups, f)
+
+table = tabulate(top_lethality_groups, headers=["Group", "Kill", "Wound", "Severity"], tablefmt='orgtbl')
 print(table)
 plot_lethality(lethality_list[:10])

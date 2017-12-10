@@ -401,3 +401,36 @@ def curve_plot(xs, ys, **kwargs):
     if kwargs.get('show', True): plt.show()
     if save_path: ax.get_figure().savefig(save_path)
     return ax 
+
+def sns_heatmap(matrix, **kwargs):
+    """plot seaborn heatmap
+    Args:
+        matrix: 2D np array 
+        **kwargs: 
+
+    Return: 
+    """
+    size = kwargs.get('size', None)
+    if size: fig = plt.figure(figsize=size)
+    else:    fig = plt.figure()
+    save_path = kwargs.get('save_path', None)
+    ylabels = kwargs.get('ylabels', None)
+    y_arr = kwargs.get('y_arr', None)
+    xtick_rot = kwargs.get('xtick_rot', None)
+    ytick_rot = kwargs.get('ytick_rot', None)
+    xticklabels = kwargs.get('xticklabels', None)
+    yticklabels = kwargs.get('yticklabels', None)
+
+
+    ax = sns.heatmap(matrix, cmap="YlGnBu", xticklabels = xticklabels, yticklabels=yticklabels)
+
+    ax_set_title(ax, kwargs.get('title', ''))
+    ax.set_xlabel(kwargs.get('xlabel', ''), fontsize=12)
+    ax.set_ylabel(kwargs.get('ylabel', ''), fontsize=12)
+
+    if xtick_rot: rotate_axis_ticks("x", xtick_rot)
+    if ytick_rot: rotate_axis_ticks("y", ytick_rot)
+    plt.tight_layout() 
+
+    if save_path: ax.get_figure().savefig(save_path)
+    return ax 
