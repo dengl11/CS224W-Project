@@ -21,8 +21,13 @@ from dataframe_preprocessor import DataframePreprocessor
 
 
 features = ["lethality", "peak_year", "attack_type", "h2a"]
-top_k = 10
-fig_path = "../../out/fig/group_similarity.png"
+top_k = 100
+if top_k == 10:
+    fig_path = "../../out/fig/group_similarity.png"
+    sim_pkl = "../../out/data/similarity.pkl" 
+else:
+    fig_path = "../../out/fig/group_similarity_100.png"
+    sim_pkl = "../../out/data/similarity_{}.pkl".format(top_k) 
 
 with open("../../out/data/attack_type.pkl", "rb") as f:
     attack_dict = pickle.load(f, encoding="latin1")
@@ -48,8 +53,10 @@ for v in lethality_arr:
     year = year_dict[name]
     group_vectors[name] = [lethality, year, attack_type, h2a]
 
-# group_names = [x[0] for x in lethality_arr]
-group_names = ['Al-Qaida', 'Al-Shabaab', 'Tehrik-i-Taliban Pakistan (TTP)', 'Taliban', 'Al-Qaida in Iraq','Boko Haram',  'Liberation Tigers of Tamil Eelam (LTTE)', 'Shining Path (SL)','Islamic State of Iraq and the Levant (ISIL)',  'Farabundo Marti National Liberation Front (FMLN)']
+if top_k == 10:
+    group_names = ['Al-Qaida', 'Al-Shabaab', 'Tehrik-i-Taliban Pakistan (TTP)', 'Taliban', 'Al-Qaida in Iraq','Boko Haram',  'Liberation Tigers of Tamil Eelam (LTTE)', 'Shining Path (SL)','Islamic State of Iraq and the Levant (ISIL)',  'Farabundo Marti National Liberation Front (FMLN)']
+else:
+    group_names = [x[0] for x in lethality_arr]
 
 def group_similarity(v1, v2):
     """return similarity score of two groups
@@ -100,6 +107,11 @@ sns_heatmap(similarity_matrix,
             yticklabels=simple_group_names, 
             save_path = fig_path)
 
-with open("../../out/data/similarity.pkl", "wb") as f:
+# save group vectors 
+with open("../../out/data/group_vectors.pkl", "wb") as f:
+    pickle.dump(group_vectors, f)
+
+# save similarity_matrix 
+with open(sim_pkl, "wb") as f:
     dic = {"group": group_names, "matrix": similarity_matrix}
     pickle.dump(dic, f)
