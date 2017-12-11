@@ -46,10 +46,10 @@ layout['geo'] = dict(
             showframe = 1,
         )
 
-measure = df[COL_nwound] + 10 * df[COL_nkill]
+measure = df[COL_nwound] + 3 * df[COL_nkill]
 measure[measure>0] = np.log10(measure[measure>0])
 
-colorbar_title = "log10[10 * N-kill + N-Wound]"
+colorbar_title = "log10[3 * N-kill + N-Wound]"
 
 ### node trace 
 nodes = dict(

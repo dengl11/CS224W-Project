@@ -48,7 +48,7 @@ layout['geo'] = dict(
             showframe = 1,
         )
 
-measure = df[COL_nwound] + df[COL_nkill]
+measure = df[COL_nwound] + 3 * df[COL_nkill]
 ### node trace 
 nodes = dict(
         type = 'scattergeo',
@@ -60,7 +60,7 @@ nodes = dict(
             colorscale='Viridis',
             colorbar=dict(
                 thickness=15,
-                title='N-kill',
+                title='Lethality = 3*N-Kill + N-Wound',
                 xanchor='left',
                 ),
             line = dict(width=0.5),

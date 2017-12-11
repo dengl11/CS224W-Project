@@ -22,7 +22,7 @@ tmp_file = "./tmp/lethality.pkl"
 top_groups_output = "../../out/data/top_lethality_group.pkl"
 preprocess = 1
 kill_wound_ratio = 3
-top_k = 100
+top_k = 10
 
 def preprocess_lethality():
     df_preprocessor = get_full_gtd()
@@ -43,7 +43,7 @@ def plot_lethality(lethality):
     lethality.reverse()
     names = [x[0] for x in lethality]
     severity = [x[3] for x in lethality]
-    hbar_plot(names, severity, "Lethality", "Groups", "Lethality Ranking", save_path = "../../out/fig/lethality_ranking.png", xtick_rot=45)
+    hbar_plot(names, severity, "Lethality", "Groups", "Lethality Ranking", save_path = "../../out/fig/lethality_ranking_{}.png".format(top_k), xtick_rot=45)
 
 
 if preprocess: preprocess_lethality()

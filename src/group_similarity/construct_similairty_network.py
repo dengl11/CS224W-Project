@@ -23,6 +23,8 @@ from dataframe_preprocessor import DataframePreprocessor
 sim_pkl = "../../out/data/similarity_100.pkl"
 group_vec_pkl = "../../out/data/group_vectors.pkl"
 sim_network_tsv = "../../data/GTD/generated/sim_network.tsv"
+community_pkl = "../../out/data/similarity_community.pkl"
+
 sim_threshold = 5
 
 with open(sim_pkl, "rb") as f:
@@ -52,17 +54,29 @@ with open(sim_network_tsv, "w") as f:
     for g1, g2, s in edges:
         print("{}\t{}\t{}".format(g1, g2, s), file = f)
 
-def get_3d_sim_network():
+def get_3d_sim_network(community=False):
     """return the plotly object for 3D similarity network
     Return: 
     """
-    Xn, Yn, Zn = [np.zeros(n_group) for _ in range(3)]
+    if community: 
+        with open(community_pkl, "rb") as f:
+            community_dic = pickle.load(f, encoding="latin1")
+
+    Xn, Yn, Zn, lethality = [np.zeros(n_group) for _ in range(4)]
+    names = []
+
     for i, name in enumerate(groups):
-        # features = ["lethality", "peak_year", "attack_type", "h2a", "log", "lat"]
+        # features = ["lethality", "peak_year", "attack_type", "target_type", "weapon_type", "h2a", "log", "lat"]
         v = group_vecs[name]
         Xn[i] = v[-2]
         Zn[i] = v[-1]
         Yn[i] = v[1]
+        lethality[i] = v[0]
+        names.append(name)
+
+    if community: node_colors = [community_dic[i] for i in range(n_group)]
+    else: node_colors = np.log(lethality)
+
     # construct graph nodes 
     nodes=Scatter3d(x=Xn,
                y=Yn,
@@ -70,11 +84,14 @@ def get_3d_sim_network():
                mode='markers',
                name='actors',
                marker=Marker(symbol='dot',
-                             size=6,
+                             size=8,
+                             color=node_colors,
                              colorscale='Viridis',
+                             colorbar = dict(title = 'Group Lethality' if not community else "Community"),
                              line=Line(color='rgb(50,50,50)', width=0.5)
                              ),
-               hoverinfo='text'
+                text=names,
+                hoverinfo='text',
                )
     # construct edges
     Xe, Ye, Ze, edge_weights = [], [], [], []
@@ -87,12 +104,13 @@ def get_3d_sim_network():
         edge_weights.append(s)
 
     edges_trace=Scatter3d(x=Xe,
-               y=Ye,
-               z=Ze,
-               mode='lines',
-               line=Line(color='rgb(125,125,125)', width=1),
-               hoverinfo=edge_weights
-               )
+                           y=Ye,
+                           z=Ze,
+                           mode='lines',
+                           line=Line(color='rgb(125,125,125)', width=2),
+                            text=edge_weights,
+                            hoverinfo='text',
+                           )
 
 
 
@@ -100,23 +118,24 @@ def get_3d_sim_network():
     axis=dict(showbackground=False,
           showline=True,
           zeroline=True,
-          showgrid=False,
+          titlefont = {'size':20},
+          # showgrid=False,
           showticklabels=True,
-          title=''
           )
     # layout
     layout = Layout(
-         title="3D Similarity Network",
-         width=1200,
-         height=1000,
+         title="3D Similarity Network (Similarity Threshold = {})".format(sim_threshold) if not community else "3D Terrorist Group Community Detection",
+         titlefont = {'size':30, 'family':"Arial"},
+         width=1300,
+         height=900,
          showlegend=False,
          scene=Scene(
-         xaxis=XAxis(axis),
-         yaxis=YAxis(axis),
-         zaxis=ZAxis(axis),
+        xaxis=dict(XAxis(axis), **{"title": "Longitude"}),
+        yaxis=dict(YAxis(axis), **{"title": "Year"}),
+        zaxis=dict(ZAxis(axis), **{"title": "Latitude"}),
         ),
      margin=Margin(
-        t=100
+        t=80
     ),
     hovermode='closest',
     )
@@ -126,3 +145,4 @@ def get_3d_sim_network():
 
 py.sign_in('dengl11', 'hrDwKpc7egWbsZPccRHi')
 sim_fig = get_3d_sim_network() 
+community_fig = get_3d_sim_network(community=True) 
