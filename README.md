@@ -1,4 +1,4 @@
-# CS224W-Project
+# CS224W-Project: Uncover Terrorist Network
 
 ### Team
 
@@ -9,9 +9,13 @@
 --------------------------
 
 ### Poster
-<a href="./CS224W-Poster.pdf">
+<a href="./doc/CS224W-Poster.pdf">
 <img src="./doc/poster_img.png" width="100%"></a>
 
-### Poster
-<a href="./CS224W-Poster.pdf">
-<img src="./doc/poster_img.png" width="100%"></a>
+--------------------------
+
+### Report 
+<div style="text-align:center">
+<a href="./doc/CS224W_Final_Report.pdf">
+<img src="./doc/report_img.png" width="70%"></a>
+</div>
