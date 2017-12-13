@@ -25,7 +25,7 @@ group_vec_pkl = "../../out/data/group_vectors.pkl"
 sim_network_tsv = "../../data/GTD/generated/sim_network.tsv"
 community_pkl = "../../out/data/similarity_community.pkl"
 
-sim_threshold = 5
+sim_threshold = 3.8
 
 with open(sim_pkl, "rb") as f:
     dic = pickle.load(f, encoding="latin1")
