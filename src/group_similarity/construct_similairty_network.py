@@ -20,16 +20,17 @@ import pickle
 from dataframe_preprocessor import DataframePreprocessor
 
 # Param
-sim_pkl = "../../out/data/similarity_100.pkl"
+sim_pkl = "../../out/data/similarity_1000.pkl"
 group_vec_pkl = "../../out/data/group_vectors.pkl"
 sim_network_tsv = "../../data/GTD/generated/sim_network.tsv"
 community_pkl = "../../out/data/similarity_community.pkl"
 
-sim_threshold = 3.8
+sim_threshold = 2.8
 
 with open(sim_pkl, "rb") as f:
     dic = pickle.load(f, encoding="latin1")
     groups = dic["group"] # list of group name 
+    print("groups: {}".format(len(groups)))
     sim_mat = dic["matrix"] # np 2d array 
 
 with open(group_vec_pkl, "rb") as f:
@@ -67,12 +68,15 @@ def get_3d_sim_network(community=False):
 
     for i, name in enumerate(groups):
         # features = ["lethality", "peak_year", "attack_type", "target_type", "weapon_type", "h2a", "log", "lat"]
-        v = group_vecs[name]
-        Xn[i] = v[-2]
-        Zn[i] = v[-1]
-        Yn[i] = v[1]
-        lethality[i] = v[0]
-        names.append(name)
+        try:
+            v = group_vecs[name]
+            Xn[i] = v[-2]
+            Zn[i] = v[-1]
+            Yn[i] = v[1]
+            lethality[i] = v[0]
+            names.append(name)
+        except Exception as e:
+            continue
 
     if community: node_colors = [community_dic[i] for i in range(n_group)]
     else: node_colors = np.log(lethality)

@@ -22,8 +22,11 @@ from dataframe_preprocessor import DataframePreprocessor
 
 features = ["lethality", "peak_year", "attack_type", "target_type", "weapon_type", "h2a", "log", "lat"]
 
-top_k = 100
-if top_k == 10:
+top_k = 1000
+if top_k == 1000:
+    fig_path = "../../out/fig/group_similarity.png"
+    sim_pkl = "../../out/data/similarity_1000.pkl" 
+elif top_k == 10:
     fig_path = "../../out/fig/group_similarity.png"
     sim_pkl = "../../out/data/similarity.pkl" 
 else:
@@ -56,17 +59,19 @@ group_vectors = {} # {gname: [...]}
 n_group = len(lethality_arr)
 
 for v in lethality_arr:
-    name = v[0]
-    lethality = v[-1]
-    attack_type = attack_dict[name]
-    target_type = target_dict[name]
-    weapon_type = weapon_dict[name]
-    h2a = h2a_dict[name][-1]
-    year = year_dict[name]
-    lotlat = location_dic[name] 
-    log = lotlat[0]
-    lat = lotlat[1]
-    group_vectors[name] = [lethality, year, attack_type, target_type, weapon_type, h2a, log, lat]
+    try:
+        name = v[0]
+        lethality = v[-1]
+        attack_type = attack_dict[name]
+        target_type = target_dict[name]
+        weapon_type = weapon_dict[name]
+        h2a = h2a_dict[name][-1]
+        year = year_dict[name]
+        lotlat = location_dic[name] 
+        log = lotlat[0]
+        lat = lotlat[1]
+        group_vectors[name] = [lethality, year, attack_type, target_type, weapon_type, h2a, log, lat]
+    except: continue
 
 if top_k == 10:
     group_names = ['Al-Qaida', 'Al-Shabaab', 'Tehrik-i-Taliban Pakistan (TTP)', 'Taliban', 'Al-Qaida in Iraq','Boko Haram',  'Liberation Tigers of Tamil Eelam (LTTE)', 'Shining Path (SL)','Islamic State of Iraq and the Levant (ISIL)',  'Farabundo Marti National Liberation Front (FMLN)']
@@ -117,10 +122,12 @@ def group_similarity(v1, v2):
 
 similarity_matrix = np.zeros((n_group, n_group))
 for i, v in enumerate(group_names):
-    v1 = group_vectors[v]
-    for j in range(i, n_group):
-        v2 = group_vectors[group_names[j]]
-        similarity_matrix[i][j] = group_similarity(v1, v2)
+    try:
+        v1 = group_vectors[v]
+        for j in range(i, n_group):
+                v2 = group_vectors[group_names[j]]
+                similarity_matrix[i][j] = group_similarity(v1, v2)
+    except: continue
 
 similarity_matrix = similarity_matrix + similarity_matrix.T - np.diag(np.diag(similarity_matrix))
 print(np.min(similarity_matrix))

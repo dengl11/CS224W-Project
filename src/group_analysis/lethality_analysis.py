@@ -22,7 +22,7 @@ tmp_file = "./tmp/lethality.pkl"
 top_groups_output = "../../out/data/top_lethality_group.pkl"
 preprocess = 1
 kill_wound_ratio = 3
-top_k = 10
+top_k = 1000
 
 def preprocess_lethality():
     df_preprocessor = get_full_gtd()
